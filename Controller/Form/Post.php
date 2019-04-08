@@ -7,10 +7,23 @@
 namespace SY\Contact\Controller\Form;
 
 use Magento\Framework\App\Action\Action;
-use Magento\Framework\Controller\ResultFactory; 
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\Controller\ResultFactory;
 
 class Post extends Action {
-	public function execute() {
+
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger;
+
+    public function __construct(Context $context, \Psr\Log\LoggerInterface $logger)
+    {
+        parent::__construct($context);
+        $this->logger = $logger;
+    }
+
+    public function execute() {
 		$validator = $this->_objectManager->get('Magento\Framework\Data\Form\FormKey\Validator');
 		if ($validator->validate($this->getRequest())) {
 			$helper = $this->_objectManager->get('SY\Contact\Helper\Data');
@@ -44,7 +57,9 @@ class Post extends Action {
 						$messageManager = $this->_objectManager->get('Magento\Framework\Message\ManagerInterface');
 						$messageManager->addSuccess(__('Thanks for contacting us with your comments and questions. We\'ll respond to you very soon.'));
 					}
-				} catch (\Exception $e) {}
+				} catch (\Exception $e) {
+				    $this->logger->error($e->getMessage(), ['exception' => $e]);
+                }
 			}
 		}
 		$resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
