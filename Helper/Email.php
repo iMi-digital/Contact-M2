@@ -89,7 +89,7 @@ class Email extends Data
             foreach ($array as $field) {
                 $value = is_array($field['value']) ? implode(', ', $field['value']) : (string) $field['value'];
                 $vars[$field['key']] = $value;
-                $allFieldsHtml .= sprintf('<strong>%s:</strong> %s<br>', htmlspecialchars($field['label']), htmlspecialchars($value));
+                $allFieldsHtml .= sprintf('<strong>%s:</strong> %s<br>', htmlspecialchars($field['label']), htmlspecialchars($value)) . PHP_EOL;
             }
         }
 
