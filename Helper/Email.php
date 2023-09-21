@@ -67,11 +67,20 @@ class Email extends Data
         $this->request = $request;
         $info = $this->request->getData('info');
         $info = $this->_json->unserialize($info);
+
         if (is_array($info) && count($info) > 0) {
+
+            $didSentEmail = false;
             foreach ($info as $field) {
                 if (@$field['type'] == self::EMAIL_TYPE) {
                     $this->send($field['value'], $this->toVars($info), $storeId);
+                    $didSentEmail = true;
                 }
+            }
+
+            if (!$didSentEmail) {
+                $this->send(null, $this->toVars($info), $storeId);
+
             }
         }
     }
@@ -98,14 +107,14 @@ class Email extends Data
     }
 
     /**
-     * @param string $to
+     * @param ?string $to if this is null, send only to customer service (but use it as $to)
      * @param array $vars
      * @param int $storeId
      *
      * @throws LocalizedException
      * @throws MailException
      */
-    public function send(string $to, array $vars, int $storeId = 0)
+    public function send(?string $to, array $vars, int $storeId = 0)
     {
         $this->inlineTranslate->suspend();
         $this->transportBuilder->setTemplateIdentifier(
@@ -115,8 +124,13 @@ class Email extends Data
             'area' => Area::AREA_FRONTEND,
             'store' => $storeId,
         ]);
-        $this->transportBuilder->addTo($to);
-        $this->transportBuilder->addBcc($this->getRecipientAddress($storeId));
+
+        if ($to === null) {
+            $this->transportBuilder->addTo($this->getRecipientAddress($storeId));
+        } else {
+            $this->transportBuilder->addTo($to);
+            $this->transportBuilder->addBcc($this->getRecipientAddress($storeId));
+        }
         $this->transportBuilder->setFromByScope($this->getFrom($storeId));
         $this->transportBuilder->setTemplateVars($vars);
         $this->transportBuilder->getTransport()->sendMessage();
