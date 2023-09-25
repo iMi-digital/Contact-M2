@@ -28,7 +28,8 @@
 					<backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
 					<comment><![CDATA[
 					* You can use directives in for the Default Value such as {{customer.firstname}} {{customerDefaultBilling.city}}<br>
-					** Enter a field name to show the current field only, if another one is filled.
+					** Enter a field name to show the current field only, if another one is filled.<br>
+					*** Email type fields will receive the email. If you want to ask for another email, use the text type.
 					]]></comment>
 				</field>
 				<field id="email_template" translate="label comment" type="select" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">

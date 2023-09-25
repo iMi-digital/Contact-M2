@@ -67,11 +67,20 @@ class Email extends Data
         $this->request = $request;
         $info = $this->request->getData('info');
         $info = $this->_json->unserialize($info);
+
         if (is_array($info) && count($info) > 0) {
+
+            $didSentEmail = false;
             foreach ($info as $field) {
                 if (@$field['type'] == self::EMAIL_TYPE) {
                     $this->send($field['value'], $this->toVars($info), $storeId);
+                    $didSentEmail = true;
                 }
+            }
+
+            if (!$didSentEmail) {
+                $this->send(null, $this->toVars($info), $storeId);
+
             }
         }
     }
@@ -83,25 +92,29 @@ class Email extends Data
      */
     public function toVars(array $array)
     {
+        $allFieldsHtml = '';
         $vars = [];
         if (is_array($array) && count($array) > 0) {
             foreach ($array as $field) {
-                $vars[$field['key']] = $field['value'];
+                $value = is_array($field['value']) ? implode(', ', $field['value']) : (string) $field['value'];
+                $vars[$field['key']] = $value;
+                $allFieldsHtml .= sprintf('<strong>%s:</strong> %s<br>', htmlspecialchars($field['label']), htmlspecialchars($value)) . PHP_EOL;
             }
         }
 
+        $vars['_all_fields_html'] = $allFieldsHtml;
         return $vars;
     }
 
     /**
-     * @param string $to
+     * @param ?string $to if this is null, send only to customer service (but use it as $to)
      * @param array $vars
      * @param int $storeId
      *
      * @throws LocalizedException
      * @throws MailException
      */
-    public function send(string $to, array $vars, int $storeId = 0)
+    public function send(?string $to, array $vars, int $storeId = 0)
     {
         $this->inlineTranslate->suspend();
         $this->transportBuilder->setTemplateIdentifier(
@@ -111,9 +124,14 @@ class Email extends Data
             'area' => Area::AREA_FRONTEND,
             'store' => $storeId,
         ]);
-        $this->transportBuilder->addTo($to);
-        $this->transportBuilder->addBcc($this->getRecipientAddress());
-        $this->transportBuilder->setFromByScope($this->getFrom());
+
+        if ($to === null) {
+            $this->transportBuilder->addTo($this->getRecipientAddress($storeId));
+        } else {
+            $this->transportBuilder->addTo($to);
+            $this->transportBuilder->addBcc($this->getRecipientAddress($storeId));
+        }
+        $this->transportBuilder->setFromByScope($this->getFrom($storeId));
         $this->transportBuilder->setTemplateVars($vars);
         $this->transportBuilder->getTransport()->sendMessage();
         $this->inlineTranslate->resume();
@@ -122,35 +140,35 @@ class Email extends Data
     /**
      * @return mixed
      */
-    private function getRecipientAddress()
+    private function getRecipientAddress(int $storeId = 0)
     {
-        return $this->getContactConfig('general/send_to') ?? $this->getConfig('trans_email/ident_sales/email');
+        return $this->getContactConfig('general/send_to', $storeId) ?? $this->getConfig('trans_email/ident_sales/email', $storeId);
     }
 
     /**
      * @return array
      */
-    private function getFrom()
+    private function getFrom(int $storeId = 0)
     {
         return [
-            'name' => $this->getFromName(),
-            'email' => $this->getFromAddress(),
+            'name' => $this->getFromName($storeId),
+            'email' => $this->getFromAddress($storeId),
         ];
     }
 
     /**
      * @return mixed
      */
-    private function getFromAddress()
+    private function getFromAddress(int $storeId = 0)
     {
-        return $this->getContactConfig('general/send_from') ?? $this->getConfig('trans_email/ident_sales/email');
+        return $this->getContactConfig('general/send_from', $storeId) ?? $this->getConfig('trans_email/ident_sales/email', $storeId);
     }
 
     /**
      * @return mixed
      */
-    private function getFromName()
+    private function getFromName(int $storeId = 0)
     {
-       return  $this->getContactConfig('general/send_from_name') ?? $this->getConfig('trans_email/ident_sales/name');
+       return  $this->getContactConfig('general/send_from_name', $storeId) ?? $this->getConfig('trans_email/ident_sales/name', $storeId);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * Contact
- * 
+ *
  * @author Slava Yurthev
  */
 namespace SY\Contact\Block\Adminhtml\System\Config\Form\Field;
@@ -19,24 +19,24 @@ class Fields extends \Magento\Config\Block\System\Config\Form\Field\FieldArray\A
 		return $this->_typeRenderer
 			->addOption('text', 'Single Line Text')
 			->addOption('textarea', 'Multi Line Text')
-			->addOption('email', 'E-Mail')
+			->addOption('email', 'E-Mail***')
 			->addOption('checkbox', 'Checkbox')
 			->addOption('checkbox_list', 'Checkbox List')
 			->addOption('select', 'Drop Down');
 	}
 	protected function _prepareToRender(){
 		$this->addColumn('key', [
-				'label' => __('Key'), 
+				'label' => __('Key'),
 				'style'=>'min-width:100px',
 				'class' => 'input-text required'
 			]);
 		$this->addColumn('label', [
-				'label' => __('Label'), 
+				'label' => __('Label'),
 				'style'=>'min-width:100px',
 				'class' => 'input-text required'
 			]);
 		$this->addColumn('field_class', [
-				'label' => __('Field Class'), 
+				'label' => __('Field Class'),
 				'style'=>'min-width:100px'
 			]);
 		$this->addColumn('default_value', [
@@ -52,7 +52,7 @@ class Fields extends \Magento\Config\Block\System\Config\Form\Field\FieldArray\A
                 'style'=>'min-width:100px'
             ]);
 		$this->addColumn('field_type', [
-				'label' => __('Type'), 
+				'label' => __('Type'),
 				'style'=>'min-width:100px',
 				'renderer' => $this->getTypeRenderer()
 			]);
@@ -65,7 +65,7 @@ class Fields extends \Magento\Config\Block\System\Config\Form\Field\FieldArray\A
 		$type = $row->getData('field_type');
 		$key = 'option_' . $this->getTypeRenderer()->calcOptionHash($type);
 		$options[$key] = 'selected="selected"';
-		
+
 		$row->setData('option_extra_attrs', $options);
 	}
 }
