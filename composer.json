@@ -5,7 +5,7 @@
         "OSL-3.0"
     ],
     "require": {
-        "php": "^7.2|~8.0.0|~8.1.0"
+        "magento/module-contact": "^100.4.5"
     },
     "type": "magento2-module",
     "authors": [
