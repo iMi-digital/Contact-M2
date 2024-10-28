@@ -13,23 +13,16 @@ use Magento\Framework\UrlInterface;
 
 class PostActions extends Column
 {
-    const EDIT = 'sy_contact/requests/edit';
-    const DELETE = 'sy_contact/requests/delete';
-    protected $urlBuilder;
-    private $editUrl;
-    private $deleteUrl;
+    private const EDIT = 'sy_contact/requests/edit';
+
     public function __construct(
+        protected readonly UrlInterface $urlBuilder,
         ContextInterface $context,
         UiComponentFactory $uiComponentFactory,
-        UrlInterface $urlBuilder,
+        private readonly string $editUrl = self::EDIT,
         array $components = [],
         array $data = [],
-        $editUrl = self::EDIT,
-        $deleteUrl = self::DELETE
     ) {
-        $this->urlBuilder = $urlBuilder;
-        $this->editUrl = $editUrl;
-        $this->deleteUrl = $deleteUrl;
         parent::__construct($context, $uiComponentFactory, $components, $data);
     }
     public function prepareDataSource(array $dataSource){
@@ -41,16 +34,6 @@ class PostActions extends Column
                         'href' => $this->urlBuilder->getUrl($this->editUrl, ['id' => $item['id']]),
                         'label' => __('Edit')
                     ];
-                    /*
-                    $item[$name]['delete'] = [
-                        'href' => $this->urlBuilder->getUrl($this->deleteUrl, ['id' => $item['id']]),
-                        'label' => __('Delete'),
-                        'confirm' => [
-                            'title' => __('Delete'),
-                            'message' => __('Are you sure you wan\'t to delete record?')
-                        ]
-                    ];
-                    */
                 }
             }
         }

@@ -9,41 +9,27 @@ namespace SY\Contact\Controller\Form;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Data\Form\FormKey\Validator;
+use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
+use SY\Contact\Helper\Data;
+use SY\Contact\Helper\Email;
+use SY\Contact\Model\Request;
 
 class Post extends Action {
 
-    private $request;
-    private $helper;
-    private $json;
-    private $validator;
-    private $_storemanagerinterface;
-    private $email;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
     public function __construct(
-        \Magento\Framework\App\Action\Context $context,
-        \SY\Contact\Model\Request $request,
-        \SY\Contact\Helper\Data $helper,
-        \Magento\Framework\Serialize\Serializer\Json $json,
-        \Magento\Framework\Data\Form\FormKey\Validator $validator,
-        \Magento\Store\Model\StoreManagerInterface $_storemanagerinterface,
-        \SY\Contact\Helper\Email $email,
-        LoggerInterface $logger
+        Context $context,
+        private readonly Request $request,
+        private readonly Data $helper,
+        private readonly Json $json,
+        private readonly Validator $validator,
+        private readonly StoreManagerInterface $storeManager,
+        private readonly Email $email,
+        private readonly LoggerInterface $logger
     ){
         parent::__construct($context);
-
-        $this->request = $request;
-        $this->helper = $helper;
-        $this->json = $json;
-        $this->validator = $validator;
-        $this->storeManager = $_storemanagerinterface;
-        $this->email = $email;
-        $this->logger = $logger;
     }
 
     public function execute() {
