@@ -85,16 +85,11 @@ class Email extends Data
         }
     }
 
-    /**
-     * @param $array
-     *
-     * @return array
-     */
-    public function toVars(array $array)
+    public function toVars(array $array): array
     {
         $allFieldsHtml = '';
         $vars = [];
-        if (is_array($array) && count($array) > 0) {
+        if (count($array) > 0) {
             foreach ($array as $field) {
                 $value = is_array($field['value']) ? implode(', ', $field['value']) : (string) $field['value'];
                 $vars[$field['key']] = $value;
