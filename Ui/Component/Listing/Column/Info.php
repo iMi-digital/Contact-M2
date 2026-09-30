@@ -36,7 +36,8 @@ class Info extends \Magento\Ui\Component\Listing\Columns\Column
 						$html = '';
 						if(count($info)>0){
 							foreach ($info as $field) {
-								$html .= '<p><strong>'.$field['label'].':</strong> '.$field['value']."</p>";
+								$value = is_array($field['value']) ? implode(', ', $field['value']) : (string) $field['value'];
+								$html .= '<p><strong>'.htmlspecialchars($field['label']).':</strong> '.htmlspecialchars($value)."</p>";
 							}
 						}
 						$item['info'] = $html;
