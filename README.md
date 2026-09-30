@@ -14,6 +14,8 @@ Based on (https://github.com/SlavaYurthev/Contact-M2/)
 
 The plugin is configured at `Stores -> Configuration -> Custom Contact -> Contact Us`
 
+Submitted requests are listed at `Customers -> Contact -> Requests`
+
 ### Recipient
 
 Email type fields will receive the email. If you want to ask for another email, use the text type.
