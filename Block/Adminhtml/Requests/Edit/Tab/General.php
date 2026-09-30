@@ -50,7 +50,8 @@ class General extends Generic implements TabInterface {
 		if(count($info)>0){
 			foreach ($info as $field) {
 				try {
-					$model->setData('info_'.$field['key'], $field['value']);
+					$value = is_array($field['value']) ? implode(', ', $field['value']) : (string) $field['value'];
+					$model->setData('info_'.$field['key'], $value);
 					$fieldset->addField(
 						'info_'.$field['key'],
 						'label',
